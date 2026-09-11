@@ -1,0 +1,15 @@
+<configuration>
+    <input>
+        <net-file value="C:\Users\andy5\Downloads\碩論\gradu\configs\sumo\grid7x7.net.xml"/>
+        <route-files value="C:\Users\andy5\Downloads\碩論\gradu\configs\sumo\grid7x7.rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="10000"/>
+        <step-length value="1.0"/>
+    </time>
+    <processing>
+        <collision.action value="none"/>
+        <ignore-route-errors value="true"/>
+    </processing>
+</configuration>

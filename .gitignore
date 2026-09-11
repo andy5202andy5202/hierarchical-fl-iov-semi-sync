@@ -1,9 +1,23 @@
-*.log
-*.xml
+# Python
 __pycache__/
-*.sumocfg
-data/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.DS_Store
+
+# Logs
+*.log
 logs/
-test.py 
-*.yml
 veh/
+
+# Dataset
+data/
+datasets/raw/
+cifar_non_iid/
+cifar_noniid_3groups_mixed/
+cifar_noniid_9groups_split/
+
+# Temporary test
+test.py

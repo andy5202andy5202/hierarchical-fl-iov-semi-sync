@@ -1,22 +1,25 @@
-import os
-import subprocess
+from pathlib import Path
 import random
+import subprocess
 
-# ----------------------------
-# Configuration for 7x7 Grid
-# ----------------------------
 GRID_SIZE = 7
-GRID_SPACING = 110  # 每格距離（可調整）
-NODES_FILE = "grid7x7.nod.xml"
-EDGES_FILE = "grid7x7.edg.xml"
-NET_FILE = "grid7x7.net.xml"
-SUMOCFG_FILE = "grid7x7.sumocfg"
-ROUTES_FILE = "grid7x7.rou.xml"
+GRID_SPACING = 110
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+SUMO_DIR = ROOT_DIR / "configs" / "sumo"
+
+SUMO_DIR.mkdir(parents=True, exist_ok=True)
+
+NODES_FILE = SUMO_DIR / "grid7x7.nod.xml"
+EDGES_FILE = SUMO_DIR / "grid7x7.edg.xml"
+NET_FILE = SUMO_DIR / "grid7x7.net.xml"
+ROUTES_FILE = SUMO_DIR / "grid7x7.rou.xml"
+SUMOCFG_FILE = SUMO_DIR / "grid7x7.sumocfg"
 
 # ----------------------------
 # Generate Nodes
 # ----------------------------
-with open(NODES_FILE, 'w') as f:
+with open(NODES_FILE, 'w', encoding='utf-8') as f:
     f.write('<nodes>\n')
     for x in range(GRID_SIZE):
         for y in range(GRID_SIZE):
@@ -27,7 +30,7 @@ with open(NODES_FILE, 'w') as f:
 # ----------------------------
 # Generate Edges (bidirectional)
 # ----------------------------
-with open(EDGES_FILE, 'w') as f:
+with open(EDGES_FILE, 'w', encoding='utf-8') as f:
     f.write('<edges>\n')
     for x in range(GRID_SIZE):
         for y in range(GRID_SIZE):
@@ -84,7 +87,7 @@ def manhattan_path(x1, y1, x2, y2):
 
 
 
-with open(ROUTES_FILE, 'w') as f:
+with open(ROUTES_FILE, 'w', encoding='utf-8') as f:
     f.write('<routes>\n')
 
     vehicle_id = 0
@@ -128,7 +131,7 @@ subprocess.run([
 # ----------------------------
 # Generate SUMO Config file
 # ----------------------------
-with open(SUMOCFG_FILE, 'w') as f:
+with open(SUMOCFG_FILE, 'w', encoding='utf-8') as f:
     f.write('<configuration>\n')
     f.write('    <input>\n')
     f.write(f'        <net-file value="{NET_FILE}"/>\n')
