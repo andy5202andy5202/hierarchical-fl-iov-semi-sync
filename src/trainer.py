@@ -2,7 +2,7 @@
 import traci
 import threading
 import torch
-from train_utils import train_model
+from .train_utils import train_model
 from models.resnet import SmallResNet
 import time
 import logging

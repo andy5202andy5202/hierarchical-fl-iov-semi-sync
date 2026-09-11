@@ -3,7 +3,7 @@ import pickle
 import threading
 import torch
 import time
-from train_utils import aggregate_models, calculate_loss_and_accuracy, create_dataloader
+from .train_utils import aggregate_models, calculate_loss_and_accuracy, create_dataloader
 from models.resnet import SmallResNet
 import logging
 import matplotlib

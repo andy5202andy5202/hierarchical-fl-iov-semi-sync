@@ -4,13 +4,12 @@ import threading
 import torch
 import random
 import traci
-from train_utils import aggregate_models, calculate_loss_and_accuracy, create_dataloader
+from .train_utils import aggregate_models, calculate_loss_and_accuracy, create_dataloader
 from models.resnet import SmallResNet
-import time
-from trainer import VehicleTrainer
-import copy
-from global_server import GlobalServer
+from .trainer import VehicleTrainer
+from .global_server import GlobalServer
 import logging
+import time
 
 class EdgeServer(threading.Thread):
     def __init__(self, server_id, covered_edges,cached_node_data, global_data_path, active_training_threads, global_server,upload_due_to_position, global_clock=None, global_time=120, waiting_time=40, device='cuda'):

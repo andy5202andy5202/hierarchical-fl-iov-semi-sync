@@ -4,10 +4,10 @@ import os
 import pickle
 import torch
 from models.resnet import SmallResNet
-from train_utils import train_model
-from server_definition import EdgeServer
-from global_server import GlobalServer
-from global_clock import GlobalClock  
+from src.train_utils import train_model
+from src.edge_server import EdgeServer
+from src.global_clock import GlobalClock
+from src.global_server import GlobalServer
 from simulation_thread import SimulationThread
 from edge_server_init import init_edge_servers
 import matplotlib

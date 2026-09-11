@@ -1,4 +1,4 @@
-from server_definition import EdgeServer
+from src.edge_server import EdgeServer
 
 def init_edge_servers(cached_node_data,DATA_PATH, active_training_threads, global_server, global_clock, upload_due_to_position):
     edge0 = EdgeServer('Edge0', covered_edges={
