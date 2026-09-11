@@ -1,3 +1,12 @@
+from pathlib import Path
+import sys
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+
 import traci
 import time
 import os
@@ -8,18 +17,17 @@ from src.train_utils import train_model
 from src.edge_server import EdgeServer
 from src.global_clock import GlobalClock
 from src.global_server import GlobalServer
-from simulation_thread import SimulationThread
-from edge_server_init import init_edge_servers
+from src.simulation_thread import SimulationThread
+from src.edge_server_init import init_edge_servers
 import matplotlib
 matplotlib.use('Agg')  # 使用非 GUI 的 backend（不要 Tkinter / TkAgg）
 import matplotlib.pyplot as plt
 import random
 
 
-
 SUMO_BINARY = 'sumo'
-CONFIG_FILE = 'grid7x7.sumocfg'
-DATA_PATH = os.path.join(os.getcwd(), 'cifar_non_iid')
+CONFIG_FILE = ROOT_DIR / "configs" / "sumo" / "grid7x7.sumocfg"
+DATA_PATH = ROOT_DIR / "cifar_non_iid"
 
 active_training_threads = {}  # 在這裡初始化 active_training_threads
 cached_node_data = {}
