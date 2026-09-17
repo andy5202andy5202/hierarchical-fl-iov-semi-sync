@@ -40,7 +40,7 @@ class BasicBlock(nn.Module):
 #         self.layer1 = self._make_layer(BasicBlock, 16, num_blocks=1, stride=1)
 #         self.layer2 = self._make_layer(BasicBlock, 32, num_blocks=1, stride=2)
 #         self.layer3 = self._make_layer(BasicBlock, 64, num_blocks=1, stride=2)
-#         # ❌ layer4 砍掉了
+#         # layer4 砍掉
 
 #         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 #         self.fc = nn.Linear(64, num_classes)
@@ -145,10 +145,10 @@ class SmallResNet(nn.Module):
         self.layer1 = self._make_layer(BasicBlock, 16, num_blocks=2, stride=1)
         self.layer2 = self._make_layer(BasicBlock, 32, num_blocks=2, stride=2)
         self.layer3 = self._make_layer(BasicBlock, 64, num_blocks=2, stride=2)
-        self.layer4 = self._make_layer(BasicBlock, 128, num_blocks=2, stride=2)  # ← 新增
+        self.layer4 = self._make_layer(BasicBlock, 128, num_blocks=2, stride=2)  # 新增
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(128, num_classes)  # ← 對應上方輸出 channel
+        self.fc = nn.Linear(128, num_classes)  # 對應上方輸出 channel
 
     def _make_layer(self, block, planes, num_blocks, stride):
         strides = [stride] + [1] * (num_blocks - 1)
@@ -163,7 +163,7 @@ class SmallResNet(nn.Module):
         out = self.layer1(out)
         out = self.layer2(out)
         out = self.layer3(out)
-        out = self.layer4(out)  # ← 新增
+        out = self.layer4(out)  # 新增
         out = self.avgpool(out)
         out = torch.flatten(out, 1)
         out = self.fc(out)

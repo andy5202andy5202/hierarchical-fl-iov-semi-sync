@@ -34,8 +34,6 @@ class GlobalServer(threading.Thread):
         self.aggregate_lock = threading.Lock()
 
         atexit.register(self.safe_shutdown)
-
-        
         
         with torch.no_grad():
             dummy_input = torch.randn(1, 3, 32, 32).to(self.device)
@@ -150,7 +148,7 @@ class GlobalServer(threading.Thread):
     def run(self):
         try:
             while True:
-                # 等待 T 秒 (正常等待)
+                # 等待T秒
                 round_start = self.global_clock.get_time()
                 
                 while self.global_clock.get_time() < round_start + self.T:
@@ -167,9 +165,7 @@ class GlobalServer(threading.Thread):
 
                 self.logger.info("Global Server 已收到所有 Edge Server 的參數，開始聚合模型...")
                 
-                self.logger.info("Global Server 已收到所有 Edge Server 的參數，開始聚合模型...")
-
-                self.aggregating = True  # <<< 標記正在聚合
+                self.aggregating = True  # 標記正在聚合
                 with self.aggregate_lock:
                     # 檢查收到的模型版本
                     received_versions = [version for _, version in self.received_models]

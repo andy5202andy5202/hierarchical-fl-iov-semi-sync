@@ -1,5 +1,4 @@
 # trainer.py
-import traci
 import threading
 import torch
 from .train_utils import train_model
@@ -97,7 +96,7 @@ class VehicleTrainer(threading.Thread):
         if finish_reason in ('loss', 'position'):
             self.trained = True
 
-        # 訓練完成後回傳模型參數（上傳邏輯放這裡）
+        # 訓練完成後回傳模型參數
         self.model.cpu()
         torch.cuda.empty_cache()
 
@@ -116,7 +115,7 @@ class VehicleTrainer(threading.Thread):
                 else:
                     print(f"[棄用模型] 車輛 {self.vehicle_id} 的模型版本 {self.global_version} ≠ {self.edge_server.server_id} 當前全局版本 {current_global_version} → 不上傳")
                     self.logger.info(f"[棄用模型] 車輛 {self.vehicle_id} 的模型版本 {self.global_version} ≠ {self.edge_server.server_id} 當前全局版本 {current_global_version} → 不上傳")
-               
+            
                 print(f"車輛 {self.vehicle_id} 訓練完成，回復為可選對象")
                 self.logger.info(f"車輛 {self.vehicle_id} 訓練完成，回復為可選對象")
                     
@@ -128,7 +127,7 @@ class VehicleTrainer(threading.Thread):
                 self.logger.info(f"[{self.vehicle_id}] 上傳模型時發生未知錯誤：{e}")
 
             finally:
-                # 不管有沒有正常結束，都釋放 trainer 欄位
+                # 不管有沒有正常結束都釋放 trainer欄位
                 if self.vehicle_id in self.edge_server.active_training_threads:
                     self.edge_server.active_training_threads[self.vehicle_id]['trainer'] = None
                     print(f"[清理] 車輛 {self.vehicle_id} 的 trainer 已經釋放完成")

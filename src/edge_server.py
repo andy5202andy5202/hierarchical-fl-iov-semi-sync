@@ -1,7 +1,4 @@
-import os
-import pickle
 import threading
-import torch
 import random
 import traci
 from .train_utils import aggregate_models, calculate_loss_and_accuracy, create_dataloader
@@ -28,7 +25,7 @@ class EdgeServer(threading.Thread):
         self.upload_due_to_position = upload_due_to_position
         self.model = SmallResNet(num_classes=9).to(self.device)
         self.received_models = []
-        self.last_selection_time = time.time()
+        # self.last_selection_time = time.time()
         self.model_version = 1
 
         # # 載入所有資料
@@ -40,7 +37,7 @@ class EdgeServer(threading.Thread):
         logger = logging.getLogger(self.server_id)
         logger.setLevel(logging.INFO)
 
-        #這邊不需要檢查 handler，直接清除所有 handler（確保每次 clean）
+        #直接清除所有 handler 確保每次clean
         if logger.hasHandlers():
             logger.handlers.clear()
 
@@ -57,8 +54,7 @@ class EdgeServer(threading.Thread):
                 return super().format(record)
 
         formatter = GlobalClockFormatter('%(custom_time)s - %(message)s', global_clock=self.global_clock)
-
-        file_handler = logging.FileHandler(f"{self.server_id}.log", mode='w')  # ✅ overwrite mode
+        file_handler = logging.FileHandler(f"{self.server_id}.log", mode='w')  #overwrite mode
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
@@ -113,13 +109,13 @@ class EdgeServer(threading.Thread):
                 # print(f"[GlobalClock] {self.global_clock.get_time()}s - {self.server_id} Slot {current_slot + 1} 選擇車輛...")
                 self.logger.info(f"{self.server_id} Slot {current_slot + 1} 選擇車輛...")
 
-                # 1. 車輛選擇
+                # 車輛選擇
                 vehicles_in_area = []
                 active_threads_copy = self.active_training_threads.copy()
                 for vid, vehicle_info in active_threads_copy.items():
                     if vehicle_info.get('trainer') is None:  # 還沒開始訓練的車輛
                         if vid not in traci.vehicle.getIDList():
-                            continue  # 該車輛已離開模擬，不要呼叫 getRoadID
+                            continue  # 該車輛已離開，不要呼叫getRoadID
                         try:
                             position = traci.vehicle.getRoadID(vid)
                             if position and position.startswith("n_") and self.is_in_range(position):  # position 是 edge_id
@@ -131,7 +127,7 @@ class EdgeServer(threading.Thread):
                 # print(f'{self.server_id} 範圍內的車輛: {vehicles_in_area}')
                 self.logger.info(f'{self.server_id} 範圍內的車輛: {vehicles_in_area}')
 
-                # 隨機選擇最多三輛車來訓練
+                # 隨機選擇
                 selected_vehicles = random.sample(vehicles_in_area,len(vehicles_in_area))
                 # print(f'{self.server_id} 選中的車輛: {selected_vehicles}')
                 self.logger.info(f'{self.server_id} 選中的車輛: {selected_vehicles}')
@@ -164,7 +160,6 @@ class EdgeServer(threading.Thread):
                     try:
                         trainer = VehicleTrainer(vid, vehicle_info['data'], self, upload_due_to_position_counter=self.upload_due_to_position, device=self.device)
                         trainer.start()
-
                         success = trainer.started_event.wait(timeout=1.0)
                         if success:
                             self.logger.info(f"{self.server_id} 車輛 {vid} 的 trainer 訓練已啟動")
@@ -176,7 +171,6 @@ class EdgeServer(threading.Thread):
                     except Exception as e:
                         self.logger.error(f"{self.server_id} 啟動車輛 {vid} 的 trainer 失敗，錯誤：{str(e)}，跳過這台車。")
                         continue
-
                     
                 while self.global_clock.get_time() < expected_slot_end:
                     time.sleep(0.1)
@@ -190,7 +184,6 @@ class EdgeServer(threading.Thread):
                     self.logger.info(f"{self.server_id} 完成聚合，本地模型版本更新為 {self.model_version}")
                 else:
                     self.logger.info(f"{self.server_id} 本輪沒有收到車輛模型，版本不變。")
-      
             # 結束後，將模型上傳到 Global Server
             self.global_server.received_models.append((self.model.state_dict(), self.model_version))
             # print(f'{self.server_id} 已將本地模型版本 {self.model_version} 上傳給 Global Server')

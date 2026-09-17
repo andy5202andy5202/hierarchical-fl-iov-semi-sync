@@ -1,5 +1,4 @@
 # train_utils.py
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -82,10 +81,7 @@ def aggregate_models(models, self):
 
     model_state_dicts = [m[0] for m in models]
     weights = []
-
-    # ---------------------------------------------------
     # Global Server 聚合：使用版本號 (Ke) 作為權重
-    # ---------------------------------------------------
     if getattr(self, "server_id", None) is None:
         Ke_list = [m[1] for m in models]  # Edge Server 上傳的 model_version 當作 Ke
         weight_sum = sum(Ke_list)
@@ -96,10 +92,7 @@ def aggregate_models(models, self):
             f"→ 收到版本號 (Ke) = {Ke_list}\n"
             f"→ 權重 = {[f'{w:.3f}' for w in weights]}"
         )
-
-    # ---------------------------------------------------
     # Edge Server 聚合：使用 staleness-aware 加權
-    # ---------------------------------------------------
     else:
         versions = [m[1] for m in models]  # 每輛車的模型版本
         current_version = getattr(self, 'model_version', 0)
@@ -131,10 +124,8 @@ def aggregate_models(models, self):
         )
 
         model_state_dicts = [m[0] for m in filtered_models]
-
-    # ---------------------
+        
     # 聚合模型
-    # ---------------------
     aggregated_state_dict = copy.deepcopy(model_state_dicts[0])
     for key in aggregated_state_dict:
         if torch.is_floating_point(aggregated_state_dict[key]):
